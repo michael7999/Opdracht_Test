@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+    ingress:
+        image: nginx:1.22
+        depends_on:
+            - todo-api-service
+        volumes:
+            - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./frontend:/var/www/static/:ro
+        ports:
+            - 80:80
+    todo-api-service:
+        build: ./backend
+        depends_on:
+            - db
+        environment:
+            - STORAGE=mysql
+            - MYSQL_HOST=db
+            - MYSQL_USER=user
+            - MYSQL_PWD=password
+            - MYSQL_DB=examen
+    db:
+        image: mysql:8.0.29-debian
+        environment:
+            MYSQL_DATABASE: 'examen'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: 'password'
+        volumes:
+            - database:/var/lib/mysql
+            - ./init.sql:/docker-entrypoint-initdb.d/1.sql
