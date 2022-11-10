@@ -4,13 +4,15 @@ services:
     db:
         image: mysql:8.0.29-debian
         environment:
-            MYSQL_DATABASE: 'examen'
-            MYSQL_USER: 'user'
-            MYSQL_PASSWORD: 'password'
-            MYSQL_ROOT_PASSWORD: 'password'
+            - MYSQL_DATABASE=examen
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+            - MYSQL_ROOT_PASSWORD
         volumes:
             - database:/var/lib/mysql
             - ./init.sql:/docker-entrypoint-initdb.d/1.sql
+        networks:
+            - backend
     todo-api-service:
         build: ./backend
         depends_on:
@@ -18,14 +20,17 @@ services:
         environment:
             - STORAGE=mysql
             - MYSQL_HOST=db
-            - MYSQL_USER=user
-            - MYSQL_PWD=password
+            - MYSQL_USER
+            - MYSQL_PWD=${MYSQL_PASSWORD}
             - MYSQL_DB=examen
            # STORAGE: mysql
            # MYSQL_HOST: db
            # MYSQL_USER: user
            # MYSQL_PASSWORD: password
            # MYSQL_DB: examen
+        networks:
+            - backend
+            - frontend
     ingress:
         image: nginx:1.22
         depends_on:
@@ -35,6 +40,11 @@ services:
             - ./frontend:/var/www/static/:ro
         ports:
             - 88:80
+        networks:
+            - frontend
 
 volumes:
     database:
+networks:
+    frontend:
+    backend:
