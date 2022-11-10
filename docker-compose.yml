@@ -23,11 +23,6 @@ services:
             - MYSQL_USER
             - MYSQL_PWD=${MYSQL_PASSWORD}
             - MYSQL_DB=examen
-           # STORAGE: mysql
-           # MYSQL_HOST: db
-           # MYSQL_USER: user
-           # MYSQL_PASSWORD: password
-           # MYSQL_DB: examen
         networks:
             - backend
             - frontend
